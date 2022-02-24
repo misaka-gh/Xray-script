@@ -202,8 +202,7 @@ getData() {
 			KEY_FILE="/usr/local/etc/xray/${DOMAIN}.key"
 		else
 			resolve=$(curl -sm8 ipget.net/?ip=${DOMAIN})
-			res=$(echo -n ${resolve} | grep ${IP})
-			if [[ -z "${res}" ]]; then
+			if [ $resolve != $IP ]; then
 				colorEcho ${BLUE} "${DOMAIN} 解析结果：${resolve}"
 				colorEcho ${RED} " 域名未解析到当前服务器IP(${IP})！"
 				exit 1
@@ -1478,6 +1477,7 @@ outputVmessKCP() {
 
 outputTrojan() {
 	if [[ "$xtls" == "true" ]]; then
+		link="trojan://${password}@${domain}:${port}#"
 		echo -e "   ${BLUE}IP/域名(address): ${PLAIN} ${RED}${domain}${PLAIN}"
 		echo -e "   ${BLUE}端口(port)：${PLAIN}${RED}${port}${PLAIN}"
 		echo -e "   ${BLUE}密码(password)：${PLAIN}${RED}${password}${PLAIN}"
@@ -1485,12 +1485,15 @@ outputTrojan() {
 		echo -e "   ${BLUE}加密(encryption)：${PLAIN} ${RED}none${PLAIN}"
 		echo -e "   ${BLUE}传输协议(network)：${PLAIN} ${RED}${network}${PLAIN}"
 		echo -e "   ${BLUE}底层安全传输(tls)：${PLAIN}${RED}XTLS${PLAIN}"
+		echo -e "   ${BLUE}Trojan链接:${PLAIN} $RED$link$PLAIN"
 	else
+		link="trojan://${password}@${domain}:${port}#"
 		echo -e "   ${BLUE}IP/域名(address): ${PLAIN} ${RED}${domain}${PLAIN}"
 		echo -e "   ${BLUE}端口(port)：${PLAIN}${RED}${port}${PLAIN}"
 		echo -e "   ${BLUE}密码(password)：${PLAIN}${RED}${password}${PLAIN}"
 		echo -e "   ${BLUE}传输协议(network)：${PLAIN} ${RED}${network}${PLAIN}"
 		echo -e "   ${BLUE}底层安全传输(tls)：${PLAIN}${RED}TLS${PLAIN}"
+		echo -e "   ${BLUE}Trojan链接:${PLAIN} $RED$link$PLAIN"
 	fi
 }
 
@@ -1643,6 +1646,7 @@ menu() {
 	echo -e "# ${GREEN}博客${PLAIN}: https://owo.misaka.rest                             #"
 	echo -e "# ${GREEN}TG群${PLAIN}: https://t.me/misakanetcn                            #"
 	echo "#############################################################"
+	echo -e "  "
 	echo -e "  ${GREEN}1.${PLAIN}   安装Xray-VMESS"
 	echo -e "  ${GREEN}2.${PLAIN}   安装Xray-${BLUE}VMESS+mKCP${PLAIN}"
 	echo -e "  ${GREEN}3.${PLAIN}   安装Xray-VMESS+TCP+TLS"
