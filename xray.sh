@@ -6,8 +6,6 @@ YELLOW="\033[33m" # Warning message
 BLUE="\033[36m"   # Info message
 PLAIN='\033[0m'
 
-# 以下网站是随机从Google上找到的无广告小说网站，不喜欢请改成其他网址，以http或https开头
-# 搭建好后无法打开伪装域名，可能是反代小说网站挂了，请在网站留言，或者Github发issue，以便替换新的网站
 SITES=(
 	http://www.zhuizishu.com/
 	http://xs.56dyc.com/
@@ -848,7 +846,6 @@ trojanXTLSConfig() {
 
 vmessConfig() {
 	local uuid="$(cat '/proc/sys/kernel/random/uuid')"
-	local alterid=$(shuf -i50-80 -n1)
 	cat >$CONFIG_FILE <<-EOF
 		{
 		  "inbounds": [{
@@ -859,7 +856,7 @@ vmessConfig() {
 		        {
 		          "id": "$uuid",
 		          "level": 1,
-		          "alterId": $alterid
+		          "alterId": 0
 		        }
 		      ]
 		    }
@@ -878,7 +875,6 @@ vmessConfig() {
 
 vmessKCPConfig() {
 	local uuid="$(cat '/proc/sys/kernel/random/uuid')"
-	local alterid=$(shuf -i50-80 -n1)
 	cat >$CONFIG_FILE <<-EOF
 		{
 		  "inbounds": [{
@@ -889,7 +885,7 @@ vmessKCPConfig() {
 		        {
 		          "id": "$uuid",
 		          "level": 1,
-		          "alterId": $alterid
+		          "alterId": 0
 		        }
 		      ]
 		    },
