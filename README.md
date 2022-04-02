@@ -5,7 +5,7 @@ Xray一键安装脚本，支持自动生成伪装站，支持和宝塔面板共�
 ## 使用方法
 
 ```shell
-wget -N https://raw.githubusercontent.com/Misaka-blog/Xray-script/master/xray.sh && bash xray.sh
+wget -N https://raw.githubusercontents.com/Misaka-blog/Xray-script/master/xray.sh && bash xray.sh
 ```
 
 快捷方式 `bash xray.sh`
