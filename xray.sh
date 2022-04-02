@@ -24,14 +24,10 @@ SITES=(
 CONFIG_FILE="/usr/local/etc/xray/config.json"
 OS=$(hostnamectl | grep -i system | cut -d: -f2)
 
-checkwarp(){
-	[[ -n $(wg 2>/dev/null) ]] && colorEcho $RED " 检测到WARP已打开，脚本中断运行" && colorEcho $YELLOW " 请关闭WARP之后再运行本脚本" && exit 1
-}
-
-V6_PROXY=""
-IP=$(curl -s4m8 https://ip.gs)
-[[ "$?" != "0" ]] && IP=$(curl -s6m8 https://ip.gs) && V6_PROXY="https://gh-proxy-misakano7545.koyeb.app/"
-[[ $V6_PROXY != "" ]] && echo -e nameserver 2a01:4f8:c2c:123f::1 > /etc/resolv.conf
+IP=$(curl -s4m8 ip.sb) || IP=$(curl -s6m8 ip.sb)
+if [[ -n $(curl -s6m8 ip.sb | grep ":") ]]; then
+    echo -e nameserver 2a01:4f8:c2c:123f::1 > /etc/resolv.conf
+fi
 
 BT="false"
 NGINX_CONF_PATH="/etc/nginx/conf.d/"
@@ -122,7 +118,7 @@ normalizeVersion() {
 	if [ -n "$1" ]; then
 		case "$1" in
 			v*) echo "$1" ;;
-			http*) echo "v1.5.3" ;;
+			http*) echo "v1.5.4" ;;
 			*) echo "v$1" ;;
 		esac
 	else
@@ -430,13 +426,17 @@ getCert() {
 		~/.acme.sh/acme.sh --upgrade --auto-upgrade
 		~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
 		if [[ "$BT" == "false" ]]; then
-			if [ -n $V6_PROXY ]; then
+			if [[ -n $(curl -s6m8 ip.sb | grep ":") ]]; then
 				~/.acme.sh/acme.sh --issue -d $DOMAIN --keylength ec-256 --pre-hook "systemctl stop nginx" --post-hook "systemctl restart nginx" --standalone --listen-v6
 			else
 				~/.acme.sh/acme.sh --issue -d $DOMAIN --keylength ec-256 --pre-hook "systemctl stop nginx" --post-hook "systemctl restart nginx" --standalone
 			fi
 		else
-			~/.acme.sh/acme.sh --issue -d $DOMAIN --keylength ec-256 --pre-hook "nginx -s stop || { echo -n ''; }" --post-hook "nginx -c /www/server/nginx/conf/nginx.conf || { echo -n ''; }" --standalone
+			if [[ -n $(curl -s6m8 ip.sb | grep ":") ]]; then
+                ~/.acme.sh/acme.sh --issue -d $DOMAIN --keylength ec-256 --pre-hook "nginx -s stop || { echo -n ''; }" --post-hook "nginx -c /www/server/nginx/conf/nginx.conf || { echo -n ''; }" --standalone --listen-v6
+            else
+                ~/.acme.sh/acme.sh --issue -d $DOMAIN --keylength ec-256 --pre-hook "nginx -s stop || { echo -n ''; }" --post-hook "nginx -c /www/server/nginx/conf/nginx.conf || { echo -n ''; }" --standalone
+            fi
 		fi
 		[[ -f ~/.acme.sh/${DOMAIN}_ecc/ca.cer ]] || {
 			colorEcho $RED " 获取证书失败，请截图到TG群反馈"
@@ -449,7 +449,7 @@ getCert() {
 		--fullchain-file $CERT_FILE \
 		--reloadcmd "service nginx force-reload"
 		[[ -f $CERT_FILE && -f $KEY_FILE ]] || {
-			colorEcho $RED " 获取证书失败，请截图到TG群反馈"
+			colorEcho $RED "获取证书失败，请截图到TG群反馈"
 			exit 1
 		}
 	else
@@ -703,7 +703,7 @@ installBBR() {
 installXray() {
 	rm -rf /tmp/xray
 	mkdir -p /tmp/xray
-	DOWNLOAD_LINK="${V6_PROXY}https://github.com/XTLS/Xray-core/releases/download/${NEW_VER}/Xray-linux-$(archAffix).zip"
+	DOWNLOAD_LINK="https://github.com/XTLS/Xray-core/releases/download/${NEW_VER}/Xray-linux-$(archAffix).zip"
 	colorEcho $BLUE " 下载Xray: ${DOWNLOAD_LINK}"
 	curl -L -H "Cache-Control: no-cache" -o /tmp/xray/xray.zip ${DOWNLOAD_LINK}
 	if [ $? != 0 ]; then
@@ -1694,7 +1694,6 @@ menu() {
 }
 
 checkSystem
-checkwarp
 
 action=$1
 [[ -z $1 ]] && action=menu
