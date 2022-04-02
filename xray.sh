@@ -1246,7 +1246,7 @@ install() {
 	fi
 	[[ -z $(type -P unzip) ]] && red "unzip安装失败，请检查网络" && exit 1
 	# installNginx
-	[[ $WS == "true" ]] && installNginx
+	[[ "$TLS" == "true" || "$XTLS" == "true" ]] && installNginx
 	setFirewall
 	if [[ "$TLS" == "true" || "$XTLS" == "true" ]]; then
 		getCert
