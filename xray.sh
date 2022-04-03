@@ -417,7 +417,7 @@ getCert() {
 			exit 1
 		fi
 		${PACKAGE_INSTALL[int]} socat openssl
-		if [[ "$PMT" == "yum" ]]; then
+		if [[ $SYSTEM == "CentOS" ]]; then
 			${PACKAGE_INSTALL[int]} cronie
 			systemctl start crond
 			systemctl enable crond
@@ -429,8 +429,8 @@ getCert() {
 		curl -sL https://get.acme.sh | sh -s email=hijk.pw@protonmail.sh
 		source ~/.bashrc
 		~/.acme.sh/acme.sh --upgrade --auto-upgrade
-		~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
-		if [[ "$BT" == "false" ]]; then
+		~/.acme.sh/acme.sh --set-default-ca --server zerossl
+		if [[ $BT == "false" ]]; then
 			if [[ -n $(curl -sm8 ip.sb | grep ":") ]]; then
 				~/.acme.sh/acme.sh --issue -d $DOMAIN --keylength ec-256 --pre-hook "systemctl stop nginx" --post-hook "systemctl restart nginx" --standalone --listen-v6
 			else
@@ -695,7 +695,7 @@ installBBR() {
 		return
 	fi
 	yellow " 安装BBR模块..."
-	if [[ "$PMT" == "yum" ]]; then
+	if [[ $SYSTEM == "CentOS" ]]; then
 		if [[ "$V6_PROXY" == "" ]]; then
 			rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
 			rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-4.el7.elrepo.noarch.rpm
