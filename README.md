@@ -15,13 +15,13 @@ wget -N https://raw.githubusercontents.com/Misaka-blog/Xray-script/master/xray.s
 * Xray-VMESS
 * Xray-VMESS+mKCP
 * Xray-VMESS+TCP+TLS
-* Xray-VMESS+WS+TLS(推荐)(可过cdn)
+* Xray-VMESS+WS+TLS(可过cdn)
 * Xray-VLESS+mKCP
 * Xray-VLESS+TCP+TLS
 * Xray-VLESS+WS+TLS(可过cdn)
-* Xray-VLESS+TCP+XTLS(推荐)
-* Trojan(推荐)
-* Trojan+XTLS(推荐)
+* Xray-VLESS+TCP+XTLS
+* Trojan
+* Trojan+XTLS
 
 ## 鸣谢
 
