@@ -1647,6 +1647,77 @@ setdns64(){
 	fi
 }
 
+system_optimize(){
+	if [ ! -f "/etc/sysctl.conf" ]; then
+		touch /etc/sysctl.conf
+	fi
+	sed -i '/net.ipv4.tcp_retries2/d' /etc/sysctl.conf
+	sed -i '/net.ipv4.tcp_slow_start_after_idle/d' /etc/sysctl.conf
+	sed -i '/net.ipv4.tcp_fastopen/d' /etc/sysctl.conf
+	sed -i '/fs.file-max/d' /etc/sysctl.conf
+	sed -i '/fs.inotify.max_user_instances/d' /etc/sysctl.conf
+	sed -i '/net.ipv4.tcp_syncookies/d' /etc/sysctl.conf
+	sed -i '/net.ipv4.tcp_fin_timeout/d' /etc/sysctl.conf
+	sed -i '/net.ipv4.tcp_tw_reuse/d' /etc/sysctl.conf
+	sed -i '/net.ipv4.tcp_max_syn_backlog/d' /etc/sysctl.conf
+	sed -i '/net.ipv4.ip_local_port_range/d' /etc/sysctl.conf
+	sed -i '/net.ipv4.tcp_max_tw_buckets/d' /etc/sysctl.conf
+	sed -i '/net.ipv4.route.gc_timeout/d' /etc/sysctl.conf
+	sed -i '/net.ipv4.tcp_synack_retries/d' /etc/sysctl.conf
+	sed -i '/net.ipv4.tcp_syn_retries/d' /etc/sysctl.conf
+	sed -i '/net.core.somaxconn/d' /etc/sysctl.conf
+	sed -i '/net.core.netdev_max_backlog/d' /etc/sysctl.conf
+	sed -i '/net.ipv4.tcp_timestamps/d' /etc/sysctl.conf
+	sed -i '/net.ipv4.tcp_max_orphans/d' /etc/sysctl.conf
+	sed -i '/net.ipv4.ip_forward/d' /etc/sysctl.conf
+
+	echo "net.ipv4.tcp_retries2 = 8
+	net.ipv4.tcp_slow_start_after_idle = 0
+	fs.file-max = 1000000
+	fs.inotify.max_user_instances = 8192
+	net.ipv4.tcp_syncookies = 1
+	net.ipv4.tcp_fin_timeout = 30
+	net.ipv4.tcp_tw_reuse = 1
+	net.ipv4.ip_local_port_range = 1024 65000
+	net.ipv4.tcp_max_syn_backlog = 16384
+	net.ipv4.tcp_max_tw_buckets = 6000
+	net.ipv4.route.gc_timeout = 100
+	net.ipv4.tcp_syn_retries = 1
+	net.ipv4.tcp_synack_retries = 1
+	net.core.somaxconn = 32768
+	net.core.netdev_max_backlog = 32768
+	net.ipv4.tcp_timestamps = 0
+	net.ipv4.tcp_max_orphans = 32768
+	# forward ipv4
+	#net.ipv4.ip_forward = 1" >>/etc/sysctl.conf
+	sysctl -p
+	echo "*               soft    nofile           1000000
+	*               hard    nofile          1000000" >/etc/security/limits.conf
+	echo "ulimit -SHn 1000000" >>/etc/profile
+	read -p "需要重启VPS，系统优化配置才能生效，是否现在重启？ [Y/n] :" yn
+	[[ -z $yn ]] && yn="y"
+	if [[ $yn == [Yy] ]]; then
+		yellow "VPS 重启中..."
+		reboot
+	fi
+}
+
+open_ports(){
+	systemctl stop firewalld.service
+    systemctl disable firewalld.service
+    setenforce 0
+    ufw disable
+    iptables -P INPUT ACCEPT
+    iptables -P FORWARD ACCEPT
+    iptables -P OUTPUT ACCEPT
+    iptables -t nat -F
+    iptables -t mangle -F 
+    iptables -F
+    iptables -X
+    netfilter-persistent save
+	yellow "VPS中的所有网络端口已开启"
+}
+
 menu() {
 	clear
 	echo "#############################################################"
@@ -1656,13 +1727,13 @@ menu() {
 	echo -e "# ${GREEN}TG群${PLAIN}: https://t.me/misakanetcn                            #"
 	echo "#############################################################"
 	echo -e "  "
-	echo -e "  ${GREEN}1.${PLAIN}   安装Xray-VMESS"
+	echo -e "  ${GREEN}1.${PLAIN}   安装Xray-VMESS${PLAIN}${RED}(不推荐)${PLAIN}"
 	echo -e "  ${GREEN}2.${PLAIN}   安装Xray-${BLUE}VMESS+mKCP${PLAIN}"
 	echo -e "  ${GREEN}3.${PLAIN}   安装Xray-VMESS+TCP+TLS"
-	echo -e "  ${GREEN}4.${PLAIN}   安装Xray-${BLUE}VMESS+WS+TLS${PLAIN}${RED}(可过cdn)${PLAIN}"
+	echo -e "  ${GREEN}4.${PLAIN}   安装Xray-${BLUE}VMESS+WS+TLS${PLAIN}${RED}(推荐)(可过支持WebSocket的CDN)${PLAIN}"
 	echo -e "  ${GREEN}5.${PLAIN}   安装Xray-${BLUE}VLESS+mKCP${PLAIN}"
 	echo -e "  ${GREEN}6.${PLAIN}   安装Xray-VLESS+TCP+TLS"
-	echo -e "  ${GREEN}7.${PLAIN}   安装Xray-${BLUE}VLESS+WS+TLS${PLAIN}${RED}(可过cdn)${PLAIN}"
+	echo -e "  ${GREEN}7.${PLAIN}   安装Xray-${BLUE}VLESS+WS+TLS${PLAIN}${RED}(推荐)(可过支持WebSocket的CDN)${PLAIN}"
 	echo -e "  ${GREEN}8.${PLAIN}   安装Xray-${BLUE}VLESS+TCP+XTLS"
 	echo -e "  ${GREEN}9.${PLAIN}   安装${BLUE}Trojan"
 	echo -e "  ${GREEN}10.${PLAIN}  安装${BLUE}Trojan+XTLS"
@@ -1679,13 +1750,15 @@ menu() {
 	echo " -------------"
 	echo -e "  ${GREEN}18.${PLAIN}  安装并管理WARP"
 	echo -e "  ${GREEN}19.${PLAIN}  设置DNS64服务器"
+	echo -e "  ${GREEN}20.${PLAIN}  VPS系统优化"
+	echo -e "  ${GREEN}21.${PLAIN}  放开VPS的所有端口"
 	echo " -------------"
 	echo -e "  ${GREEN}0.${PLAIN}   退出"
-	echo -n " 当前状态："
+	echo -n " 当前Xray状态："
 	statusText
 	echo
 
-	read -p "请选择操作[0-19]：" answer
+	read -p "请选择操作[0-20]：" answer
 	case $answer in
 		0) exit 1 ;;
 		1) install ;;
@@ -1707,6 +1780,8 @@ menu() {
 		17) showLog ;;
 		18) warpmenu ;;
 		19) setdns64 ;;
+		20) system_optimize ;;
+		21) open_ports ;;
 		*) red "请选择正确的操作！" && exit 1 ;;
 	esac
 }
