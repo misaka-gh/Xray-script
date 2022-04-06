@@ -1704,17 +1704,17 @@ system_optimize(){
 
 open_ports(){
 	systemctl stop firewalld.service
-    systemctl disable firewalld.service
-    setenforce 0
-    ufw disable
-    iptables -P INPUT ACCEPT
-    iptables -P FORWARD ACCEPT
-    iptables -P OUTPUT ACCEPT
-    iptables -t nat -F
-    iptables -t mangle -F 
-    iptables -F
-    iptables -X
-    netfilter-persistent save
+	systemctl disable firewalld.service
+	setenforce 0
+	ufw disable
+	iptables -P INPUT ACCEPT
+	iptables -P FORWARD ACCEPT
+	iptables -P OUTPUT ACCEPT
+	iptables -t nat -F
+	iptables -t mangle -F 
+	iptables -F
+	iptables -X
+	netfilter-persistent save
 	yellow "VPS中的所有网络端口已开启"
 }
 
@@ -1758,7 +1758,7 @@ menu() {
 	statusText
 	echo
 
-	read -p "请选择操作[0-20]：" answer
+	read -p "请选择操作[0-21]：" answer
 	case $answer in
 		0) exit 1 ;;
 		1) install ;;
