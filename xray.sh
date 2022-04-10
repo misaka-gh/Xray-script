@@ -113,7 +113,6 @@ statusText() {
 
 normalizeVersion() {
 	latestXrayVer=v$(curl -Ls "https://data.jsdelivr.com/v1/package/resolve/gh/XTLS/Xray-core" | grep '"version":' | sed -E 's/.*"([^"]+)".*/\1/')
-	done
 	if [ -n "$1" ]; then
 		case "$1" in
 			v*) echo "$1" ;;
