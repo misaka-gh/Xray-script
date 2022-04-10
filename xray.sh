@@ -717,7 +717,7 @@ installBBR() {
 installXray() {
 	rm -rf /tmp/xray
 	mkdir -p /tmp/xray
-	DOWNLOAD_LINK="https://github.com/XTLS/Xray-core/releases/download/v${NEW_VER}/Xray-linux-$(archAffix).zip"
+	DOWNLOAD_LINK="https://github.com/XTLS/Xray-core/releases/download/${NEW_VER}/Xray-linux-$(archAffix).zip"
 	yellow "正在下载Xray文件"
 	curl -L -H "Cache-Control: no-cache" -o /tmp/xray/xray.zip ${DOWNLOAD_LINK}
 	if [ $? != 0 ]; then
