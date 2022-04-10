@@ -112,9 +112,7 @@ statusText() {
 }
 
 normalizeVersion() {
-	latestXrayVer=$(curl -Ls "https://api.github.com/repos/XTLS/Xray-core/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-	until [[ $latestXrayVer != "mentions_count" ]]; do
-		latestXrayVer=$(curl -Ls "https://api.github.com/repos/XTLS/Xray-core/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+	latestXrayVer=$(curl -Ls "https://data.jsdelivr.com/v1/package/resolve/gh/XTLS/Xray-core" | grep '"version":' | sed -E 's/.*"([^"]+)".*/\1/')
 	done
 	if [ -n "$1" ]; then
 		case "$1" in
@@ -132,11 +130,11 @@ getVersion() {
 	VER=$(/usr/local/bin/xray version 2>/dev/null | head -n1 | awk '{print $2}')
 	RETVAL=$?
 	CUR_VER="$(normalizeVersion "$(echo "$VER" | head -n 1 | cut -d " " -f2)")"
-	TAG_URL="https://api.github.com/repos/XTLS/Xray-core/releases/latest"
-	NEW_VER="$(normalizeVersion "$(curl -s "${TAG_URL}" --connect-timeout 10 | grep 'tag_name' | cut -d\" -f4)")"
+	TAG_URL="https://data.jsdelivr.com/v1/package/resolve/gh/XTLS/Xray-core"
+	NEW_VER="$(normalizeVersion "$(curl -s "${TAG_URL}" --connect-timeout 10 | grep 'version' | cut -d\" -f4)")"
 
 	if [[ $? -ne 0 ]] || [[ $NEW_VER == "" ]]; then
-		red "检测 Xray 版本失败，可能是超出 Github API 限制，请稍后再试"
+		red "检测 Xray 版本失败，请检查网络"
 		return 3
 	elif [[ $RETVAL -ne 0 ]]; then
 		return 2
