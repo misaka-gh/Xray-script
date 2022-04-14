@@ -1750,7 +1750,7 @@ menu() {
 	echo -e "  ${GREEN}17.${PLAIN}  查看Xray日志"
 	echo " -------------"
 	echo -e "  ${GREEN}18.${PLAIN}  安装并管理WARP"
-	echo -e "  ${GREEN}19.${PLAIN}  设置DNS64服务器"
+	echo -e "  ${GREEN}19.${PLAIN}  纯IPv6 VPS设置DNS64服务器"
 	echo -e "  ${GREEN}20.${PLAIN}  VPS系统优化"
 	echo -e "  ${GREEN}21.${PLAIN}  放开VPS的所有端口"
 	echo " -------------"
