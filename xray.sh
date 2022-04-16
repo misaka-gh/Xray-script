@@ -133,7 +133,7 @@ getVersion() {
 	NEW_VER="$(normalizeVersion "$(curl -s "${TAG_URL}" --connect-timeout 10 | grep 'version' | cut -d\" -f4)")"
 
 	if [[ $? -ne 0 ]] || [[ $NEW_VER == "" ]]; then
-		red "检测 Xray 版本失败，请检查网络"
+		red "检测 Xray 版本失败，可能是超出 Github API 限制，请稍后再试"
 		return 3
 	elif [[ $RETVAL -ne 0 ]]; then
 		return 2
@@ -430,7 +430,7 @@ getCert() {
 		curl -sL https://get.acme.sh | sh -s email=hijk.pw@protonmail.sh
 		source ~/.bashrc
 		~/.acme.sh/acme.sh --upgrade --auto-upgrade
-		~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+		~/.acme.sh/acme.sh --set-default-ca --server zerossl
 		if [[ $BT == "false" ]]; then
 			if [[ -n $(curl -sm8 ip.sb | grep ":") ]]; then
 				~/.acme.sh/acme.sh --issue -d $DOMAIN --keylength ec-256 --pre-hook "systemctl stop nginx" --post-hook "systemctl restart nginx" --standalone --listen-v6
@@ -1258,11 +1258,10 @@ install() {
 		${PACKAGE_INSTALL[int]} libssl-dev g++
 	fi
 	[[ -z $(type -P unzip) ]] && red "unzip安装失败，请检查网络" && exit 1
-	[[ $TLS == "true" || $XTLS == "true" ]] && installNginx
+	installNginx
 	setFirewall
 	[[ $TLS == "true" || $XTLS == "true" ]] && getCert
-	# configNginx
-	[[ $TLS == "true" || $XTLS == "true" ]] && configNginx
+	configNginx
 	yellow "安装Xray..."
 	getVersion
 	RETVAL="$?"
@@ -1750,7 +1749,7 @@ menu() {
 	echo -e "  ${GREEN}17.${PLAIN}  查看Xray日志"
 	echo " -------------"
 	echo -e "  ${GREEN}18.${PLAIN}  安装并管理WARP"
-	echo -e "  ${GREEN}19.${PLAIN}  纯IPv6 VPS设置DNS64服务器"
+	echo -e "  ${GREEN}19.${PLAIN}  设置DNS64服务器"
 	echo -e "  ${GREEN}20.${PLAIN}  VPS系统优化"
 	echo -e "  ${GREEN}21.${PLAIN}  放开VPS的所有端口"
 	echo " -------------"
