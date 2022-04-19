@@ -150,7 +150,7 @@ getVersion() {
 	NEW_VER="$(normalizeVersion "$(curl -s "${TAG_URL}" --connect-timeout 10 | grep 'version' | cut -d\" -f4)")"
 
 	if [[ $? -ne 0 ]] || [[ $NEW_VER == "" ]]; then
-		red "检测 Xray 版本失败，可能是超出 Github API 限制，请稍后再试"
+		red "检测 Xray 版本失败，可能是VPS网络错误，请检查后重试"
 		return 3
 	elif [[ $RETVAL -ne 0 ]]; then
 		return 2
