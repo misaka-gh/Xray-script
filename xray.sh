@@ -56,7 +56,7 @@ SITES=(
 
 CONFIG_FILE="/usr/local/etc/xray/config.json"
 
-IP=$(curl -s4m8 ip.sb) || IP=$(curl -s6m8 ip.sb)
+IP=$(curl -s6m8 ip.sb) || IP=$(curl -s4m8 ip.sb)
 
 BT="false"
 NGINX_CONF_PATH="/etc/nginx/conf.d/"
