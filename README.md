@@ -34,3 +34,7 @@ wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/Xr
 ## 交流
 
 [Telegram 群组](https://t.me/misakanetcn)
+
+## Stars 增长记录
+
+[![Stargazers over time](https://starchart.cc/Misaka-blog/Xray-script.svg)](https://starchart.cc/Misaka-blog/Xray-script)
