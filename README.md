@@ -6,6 +6,8 @@ Xray一键安装脚本，支持自动生成伪装站，支持和宝塔面板共�
 
 使用说明：https://owo.misaka.rest/xray-script/
 
+如对脚本不放心，可使用此沙箱先测一遍再使用：https://killercoda.com/playgrounds/scenario/ubuntu
+
 近期待更新：内置分流规则，支持IPv4，IPv6和Socks5 WARP分流
 
 ## 使用方法
