@@ -13,7 +13,7 @@ Xray一键安装脚本，支持自动生成伪装站，支持和宝塔面板共�
 ## 使用方法
 
 ```shell
-wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/Xray-script/master/xray.sh && bash xray.sh
+wget -N --no-check-certificate https://raw.githubusercontents.com/misaks-gh/Xray-script/master/xray.sh && bash xray.sh
 ```
 
 快捷方式 `bash xray.sh`
@@ -41,4 +41,4 @@ wget -N --no-check-certificate https://raw.githubusercontents.com/Misaka-blog/Xr
 
 ## Stars 增长记录
 
-[![Stargazers over time](https://starchart.cc/Misaka-blog/Xray-script.svg)](https://starchart.cc/Misaka-blog/Xray-script)
+[![Stargazers over time](https://starchart.cc/misaka-gh/Xray-script.svg)](https://starchart.cc/misaka-gh/Xray-script)

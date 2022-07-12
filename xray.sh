@@ -1656,7 +1656,7 @@ showLog() {
 }
 
 warpmenu() {
-	wget -N https://raw.githubusercontents.com/Misaka-blog/Misaka-WARP-Script/master/misakawarp.sh && bash misakawarp.sh
+	wget -N https://raw.githubusercontent.com/misaak-gh/Misaka-WARP-Script/master/misakawarp.sh && bash misakawarp.sh
 }
 
 setdns64() {
